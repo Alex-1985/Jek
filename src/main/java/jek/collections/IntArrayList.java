@@ -1,9 +1,6 @@
 package jek.collections;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.*;
 
 public class IntArrayList implements List {
 
@@ -17,23 +14,125 @@ public class IntArrayList implements List {
 
     @Override
     public int size() {
+
         return end;
     }
 
     @Override
-    public boolean isEmpty() { return (end == 0); }
+    public boolean isEmpty() {
+        return (end == 0);
+    }
 
     @Override
     public boolean contains(Object o) {
         for (Object search : ial)
             if (search.equals(o))
                 return true;
+
         return false;
     }
 
+    /* вот запилил итератор, но еще не особо прочекал его, бо уже иду спать(
+    * я еще перепроверю, и то шо ты в комментах написал тож поправлю.
+    * но наверн уже на выхах, бо в чтв и птнц дохуя работаю.
+    * пис.
+    *  */
+
     @Override
     public Iterator iterator() {
-        return null;
+        class MyIterator implements ListIterator {
+
+            private int cursorNext;
+            private int cursorPrevious;
+            private int lastCall;
+
+            MyIterator() {
+                cursorNext = 0;
+                cursorPrevious = -1;
+                lastCall = -1;
+            }
+
+            @Override
+            public boolean hasNext() {
+                return (cursorNext < end);
+            }
+
+            @Override
+            public Object next() {
+                if(cursorNext == end)
+                    throw new NoSuchElementException();
+
+                lastCall = cursorNext;
+                Object next = ial[cursorNext++];
+                cursorPrevious++;
+                return next;
+            }
+
+            @Override
+            public boolean hasPrevious() {
+                return (cursorPrevious>0);
+            }
+
+            @Override
+            public Object previous() {
+                if(cursorPrevious == -1)
+                    throw new NoSuchElementException();
+
+                lastCall = cursorPrevious;
+                Object previous = ial[cursorPrevious--];
+                cursorNext--;
+                return previous;
+            }
+
+            @Override
+            public int nextIndex() {
+                return cursorNext;
+            }
+
+            @Override
+            public int previousIndex() {
+                return cursorPrevious;
+            }
+
+            @Override
+            public void remove() {
+                if (lastCall == -1)
+                    throw new IllegalStateException();
+
+                if (lastCall < end-1)
+                        System.arraycopy(ial, lastCall+1, ial, lastCall, end-lastCall-1);
+
+                ial[--end] = null;
+                lastCall = -1;
+                cursorNext--;
+                cursorPrevious--;
+            }
+
+            @Override
+            public void set(Object o) {
+                if (lastCall == -1)
+                    throw new IllegalStateException();
+
+                    ial[lastCall] = o;
+                }
+
+            @Override
+            public void add(Object o) {
+                if(end == ial.length) {
+                    Object[] ial2 = new Object[ial.length*2];
+                    System.arraycopy(ial, 0, ial2, 0, ial.length);
+                    ial = ial2;
+                }
+                if (cursorNext != 0){
+                    System.arraycopy(ial, cursorNext, ial, cursorNext+1, end-cursorNext-1);
+                    cursorNext++;
+                    ial[++cursorPrevious] = o;
+                }
+                   lastCall = -1;
+            }
+        }
+        MyIterator iter = new MyIterator();
+        return iter;
     }
 
     @Override
