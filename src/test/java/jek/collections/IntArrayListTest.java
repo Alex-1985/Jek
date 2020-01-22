@@ -52,7 +52,21 @@ class IntArrayListTest {
     }
 
     @Test
-    void remove() {
+    void removeShouldReturnObject() {
+        IntArrayList ial = new IntArrayList();
+        ial.add(1);
+        ial.add(5);
+        ial.add(54);
+        ial.add(11);
+        ial.add(75);
+        ial.add(59);
+
+        assertEquals(59, ial.remove(5));
+    }
+
+    @Test
+    void removeShouldThrowException(){
+
     }
 
     @Test
@@ -74,7 +88,7 @@ class IntArrayListTest {
         ial.add(5);
         ial.add(54);
 
-        String expectedMessage = "ты пытаешься удалить то, чего у тебя нет!";
+        String expectedMessage = "ты пытаешься получить то, чего у тебя нет!";
 
         try {
             ial.get(55);

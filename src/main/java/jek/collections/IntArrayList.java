@@ -32,7 +32,6 @@ public class IntArrayList implements List {
         for (Object search : ial)
             if (search.equals(o))
                 return true;
-
         return false;
     }
 
@@ -82,7 +81,7 @@ public class IntArrayList implements List {
     public Object get(int index) {
 
         if (index >= end || index < 0)
-            throw new IndexOutOfBoundsException("ты пытаешься удалить то, чего у тебя нет!");
+            throw new IndexOutOfBoundsException("ты получить удалить то, чего у тебя нет!");
 
         return ial[index];
     }
@@ -100,11 +99,17 @@ public class IntArrayList implements List {
     @Override
     public Object remove(int index) {
 
-        if (index >= end || index < 0) {
-            throw new IndexOutOfBoundsException("ты пытаешься удалить то, чего у тебя нет!"); }
+        if (index >= end || index < 0)
+            throw new IndexOutOfBoundsException("ты пытаешься удалить то, чего у тебя нет!");
 
+        Object removed = ial[index];
 
-     return null;
+        if (index < end-1)
+            for(int i = index; i < end-1; i++)
+                ial[i] = ial[i + 1];
+
+        ial[--end] = null;
+        return removed;
     }
 
 
