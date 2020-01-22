@@ -21,11 +21,7 @@ public class IntArrayList implements List {
     }
 
     @Override
-    public boolean isEmpty() {
-        if (end == 0)
-            return true;
-        return false;
-    }
+    public boolean isEmpty() { return (end == 0); }
 
     @Override
     public boolean contains(Object o) {
@@ -49,8 +45,7 @@ public class IntArrayList implements List {
     public boolean add(Object o) {
         if(end == ial.length) {                             //чекаем, если конец равен длинне
             Object[] ial2 = new Object[ial.length*2];       //создаем новый массив и копируем
-            for (int i = 0; i < ial.length; i++)
-                ial2[i] = ial[i];
+            System.arraycopy(ial, 0, ial2, 0, ial.length);
             ial = ial2;                                     //присваиваем ссылку старому парню
         }
         ial[end++] = o;                                     //добавляем обьект, увеличиваем конец
@@ -81,7 +76,7 @@ public class IntArrayList implements List {
     public Object get(int index) {
 
         if (index >= end || index < 0)
-            throw new IndexOutOfBoundsException("ты получить удалить то, чего у тебя нет!");
+            throw new IndexOutOfBoundsException("ты пытаешься получить то, чего у тебя нет!");
 
         return ial[index];
     }
@@ -105,8 +100,7 @@ public class IntArrayList implements List {
         Object removed = ial[index];
 
         if (index < end-1)
-            for(int i = index; i < end-1; i++)
-                ial[i] = ial[i + 1];
+            System.arraycopy(ial, index+1, ial, index, end-index-1);
 
         ial[--end] = null;
         return removed;
@@ -115,12 +109,22 @@ public class IntArrayList implements List {
 
     @Override
     public int indexOf(Object o) {
-        return 0;
+
+        for (int i = 0; i < end; i++)
+            if (ial[i].equals(o))
+                return i;
+
+        return -1;
     }
 
     @Override
     public int lastIndexOf(Object o) {
-        return 0;
+
+        for(int i = end-1; i >= 0; i--)
+            if (ial[i].equals(o))
+                return i;
+
+        return -1;
     }
 
     @Override

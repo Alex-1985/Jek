@@ -7,7 +7,14 @@ import static org.junit.jupiter.api.Assertions.*;
 class IntArrayListTest {
 
     @Test
-    void size() {
+    void sizeShouldBeZero() {
+        IntArrayList ial = new IntArrayList();
+
+        assertEquals(0, ial.size());
+    }
+
+    @Test
+    void sizeShouldContainSmthng() {
         IntArrayList ial = new IntArrayList();
         ial.add(1);
         ial.add(5);
@@ -17,7 +24,14 @@ class IntArrayListTest {
     }
 
     @Test
-    void isEmpty() {
+    void isEmptyShouldBeTrue() {
+        IntArrayList ial = new IntArrayList();
+
+        assertTrue(ial.isEmpty());
+    }
+
+    @Test
+    void isEmptyShouldBeFalse() {
         IntArrayList ial = new IntArrayList();
         ial.add(1);
         ial.add(5);
@@ -121,10 +135,29 @@ class IntArrayListTest {
 
     @Test
     void indexOf() {
+        IntArrayList ial = new IntArrayList();
+        ial.add(1);
+        ial.add(5);
+        ial.add(54);
+        ial.add(11);
+        ial.add(75);
+        ial.add(59);
+
+        assertEquals(3, ial.indexOf(11));
     }
 
     @Test
     void lastIndexOf() {
+        IntArrayList ial = new IntArrayList();
+        ial.add(1);
+        ial.add(5);
+        ial.add(54);
+        ial.add(11);
+        ial.add(5);
+        ial.add(59);
+        ial.add(54);
+
+        assertEquals(4, ial.lastIndexOf(5));
     }
 
     @Test
