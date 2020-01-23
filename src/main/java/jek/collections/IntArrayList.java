@@ -36,104 +36,39 @@ public class IntArrayList implements List {
     * я еще перепроверю, и то шо ты в комментах написал тож поправлю.
     * но наверн уже на выхах, бо в чтв и птнц дохуя работаю.
     * пис.
+    *
+    *
     *  */
 
     @Override
     public Iterator iterator() {
-        class MyIterator implements ListIterator {
+        class MyIterator implements Iterator {
 
-            private int cursorNext;
-            private int cursorPrevious;
-            private int lastCall;
+            private int cursor;
 
             MyIterator() {
-                cursorNext = 0;
-                cursorPrevious = -1;
-                lastCall = -1;
+                cursor = 0;
             }
+
 
             @Override
             public boolean hasNext() {
-                return (cursorNext < end);
+                return (cursor<end);
             }
 
             @Override
             public Object next() {
-                if(cursorNext == end)
+                if(cursor == end)
                     throw new NoSuchElementException();
 
-                lastCall = cursorNext;
-                Object next = ial[cursorNext++];
-                cursorPrevious++;
-                return next;
-            }
-
-            @Override
-            public boolean hasPrevious() {
-                return (cursorPrevious>0);
-            }
-
-            @Override
-            public Object previous() {
-                if(cursorPrevious == -1)
-                    throw new NoSuchElementException();
-
-                lastCall = cursorPrevious;
-                Object previous = ial[cursorPrevious--];
-                cursorNext--;
-                return previous;
-            }
-
-            @Override
-            public int nextIndex() {
-                return cursorNext;
-            }
-
-            @Override
-            public int previousIndex() {
-                return cursorPrevious;
-            }
-
-            @Override
-            public void remove() {
-                if (lastCall == -1)
-                    throw new IllegalStateException();
-
-                if (lastCall < end-1)
-                        System.arraycopy(ial, lastCall+1, ial, lastCall, end-lastCall-1);
-
-                ial[--end] = null;
-                lastCall = -1;
-                cursorNext--;
-                cursorPrevious--;
-            }
-
-            @Override
-            public void set(Object o) {
-                if (lastCall == -1)
-                    throw new IllegalStateException();
-
-                    ial[lastCall] = o;
-                }
-
-            @Override
-            public void add(Object o) {
-                if(end == ial.length) {
-                    Object[] ial2 = new Object[ial.length*2];
-                    System.arraycopy(ial, 0, ial2, 0, ial.length);
-                    ial = ial2;
-                }
-                if (cursorNext != 0){
-                    System.arraycopy(ial, cursorNext, ial, cursorNext+1, end-cursorNext-1);
-                    cursorNext++;
-                    ial[++cursorPrevious] = o;
-                }
-                   lastCall = -1;
+                 return ial[cursor++];
             }
         }
-        MyIterator iter = new MyIterator();
-        return iter;
+            MyIterator iter = new MyIterator();
+
+            return iter;
     }
+
 
     @Override
     public Object[] toArray() {
@@ -228,8 +163,106 @@ public class IntArrayList implements List {
 
     @Override
     public ListIterator listIterator() {
-        return null;
+        class MyListIterator implements ListIterator {
+
+            private int cursorNext;
+            private int cursorPrevious;
+            private int lastCall;
+
+            MyListIterator() {
+                cursorNext = 0;
+                cursorPrevious = -1;
+                lastCall = -1;
+            }
+
+            @Override
+            public boolean hasNext() {
+
+                return (cursorNext < end);
+            }
+
+            @Override
+            public Object next() {
+                if(cursorNext == end)
+                    throw new NoSuchElementException();
+
+                lastCall = cursorNext;
+                Object next = ial[cursorNext++];
+                cursorPrevious++;
+                return next;
+            }
+
+            @Override
+            public boolean hasPrevious() {
+
+                return (cursorPrevious>0);
+            }
+
+            @Override
+            public Object previous() {
+                if(cursorPrevious == -1)
+                    throw new NoSuchElementException();
+
+                lastCall = cursorPrevious;
+                Object previous = ial[cursorPrevious--];
+                cursorNext--;
+                return previous;
+            }
+
+            @Override
+            public int nextIndex() {
+
+                return cursorNext;
+            }
+
+            @Override
+            public int previousIndex() {
+
+                return cursorPrevious;
+            }
+
+            @Override
+            public void remove() {
+                if (lastCall == -1)
+                    throw new IllegalStateException();
+
+                if (lastCall < end-1)
+                    System.arraycopy(ial, lastCall+1, ial, lastCall, end-lastCall-1);
+
+                ial[--end] = null;
+                lastCall = -1;
+                cursorNext--;
+                cursorPrevious--;
+            }
+
+            @Override
+            public void set(Object o) {
+                if (lastCall == -1)
+                    throw new IllegalStateException();
+
+                ial[lastCall] = o;
+            }
+
+            @Override
+            public void add(Object o) {
+                if(end == ial.length) {
+                    Object[] ial2 = new Object[ial.length*2];
+                    System.arraycopy(ial, 0, ial2, 0, ial.length);
+                    ial = ial2;
+                }
+                if (cursorNext != 0){
+                    System.arraycopy(ial, cursorNext, ial, cursorNext+1, end-cursorNext-1);
+                    cursorNext++;
+                    ial[++cursorPrevious] = o;
+                }
+                lastCall = -1;
+            }
+        }
+        MyListIterator listIter = new MyListIterator();
+        return listIter;
     }
+
+
 
     @Override
     public ListIterator listIterator(int index) {
