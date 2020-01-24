@@ -1,54 +1,58 @@
 package jek.collections;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class IntArrayListTest {
 
+    IntArrayList ial;
+
+    @BeforeEach
+    void creatingArray() {
+
+        ial = new IntArrayList();    // 7 elems
+        ial.add(1);
+        ial.add(5);
+        ial.add(54);
+        ial.add(11);
+        ial.add(5);
+        ial.add(59);
+        ial.add(54);
+    }
+
+
+
     @Test
     void sizeShouldBeZero() {
-        IntArrayList ial = new IntArrayList();
 
-        assertEquals(0, ial.size());
+        ial = new IntArrayList();
+         assertEquals(0, ial.size());
     }
 
     @Test
     void sizeShouldContainSmthng() {
-        IntArrayList ial = new IntArrayList();
-        ial.add(1);
-        ial.add(5);
-        ial.add(54);
 
-        assertEquals(3, ial.size());
+        assertEquals(7, ial.size());
     }
 
     @Test
     void isEmptyShouldBeTrue() {
-        IntArrayList ial = new IntArrayList();
 
+        ial = new IntArrayList();
         assertTrue(ial.isEmpty());
     }
 
     @Test
     void isEmptyShouldBeFalse() {
-        IntArrayList ial = new IntArrayList();
-        ial.add(1);
-        ial.add(5);
-        ial.add(54);
 
         assertFalse(ial.isEmpty());
     }
 
     @Test
     void contains() {
-        IntArrayList ial = new IntArrayList();
-        ial.add(1);
-        ial.add(5);
-        ial.add(54);
-        ial.add(11);
-        ial.add(75);
-        ial.add(59);
 
         assertTrue(ial.contains(54));
     }
@@ -67,13 +71,6 @@ class IntArrayListTest {
 
     @Test
     void removeShouldReturnObject() {
-        IntArrayList ial = new IntArrayList();
-        ial.add(1);
-        ial.add(5);
-        ial.add(54);
-        ial.add(11);
-        ial.add(75);
-        ial.add(59);
 
         assertEquals(59, ial.remove(5));
     }
@@ -97,10 +94,6 @@ class IntArrayListTest {
 
     @Test
     void getShouldThrowException() {
-        IntArrayList ial = new IntArrayList();
-        ial.add(1);
-        ial.add(5);
-        ial.add(54);
 
         String expectedMessage = "ты пытаешься получить то, чего у тебя нет!";
 
@@ -113,10 +106,6 @@ class IntArrayListTest {
 
     @Test
     void getShouldReturnObject(){
-        IntArrayList ial = new IntArrayList();
-        ial.add(1);
-        ial.add(5);
-        ial.add(54);
 
         assertEquals(5, ial.get(1));
     }
@@ -135,29 +124,24 @@ class IntArrayListTest {
 
     @Test
     void indexOf() {
-        IntArrayList ial = new IntArrayList();
-        ial.add(1);
-        ial.add(5);
-        ial.add(54);
-        ial.add(11);
-        ial.add(75);
-        ial.add(59);
 
         assertEquals(3, ial.indexOf(11));
     }
 
     @Test
+    void indexOfNoSuchElem() {
+        assertEquals(-1, ial.indexOf(666));
+    }
+
+    @Test
     void lastIndexOf() {
-        IntArrayList ial = new IntArrayList();
-        ial.add(1);
-        ial.add(5);
-        ial.add(54);
-        ial.add(11);
-        ial.add(5);
-        ial.add(59);
-        ial.add(54);
 
         assertEquals(4, ial.lastIndexOf(5));
+    }
+
+    @Test
+    void lastIndexOfNoSuchElem() {
+        assertEquals(-1, ial.indexOf(666));
     }
 
     @Test

@@ -20,6 +20,7 @@ public class IntArrayList implements List {
 
     @Override
     public boolean isEmpty() {
+
         return (end == 0);
     }
 
@@ -32,13 +33,6 @@ public class IntArrayList implements List {
         return false;
     }
 
-    /* вот запилил итератор, но еще не особо прочекал его, бо уже иду спать(
-    * я еще перепроверю, и то шо ты в комментах написал тож поправлю.
-    * но наверн уже на выхах, бо в чтв и птнц дохуя работаю.
-    * пис.
-    *
-    *
-    *  */
 
     @Override
     public Iterator iterator() {
@@ -72,22 +66,29 @@ public class IntArrayList implements List {
 
     @Override
     public Object[] toArray() {
-        return new Object[0];
+
+        Object[] array = new Object[end];
+        System.arraycopy(ial, 0, array, 0, end);
+
+        return array;
     }
 
     @Override
     public boolean add(Object o) {
-        if(end == ial.length) {                             //чекаем, если конец равен длинне
-            Object[] ial2 = new Object[ial.length*2];       //создаем новый массив и копируем
-            System.arraycopy(ial, 0, ial2, 0, ial.length);
-            ial = ial2;                                     //присваиваем ссылку старому парню
-        }
-        ial[end++] = o;                                     //добавляем обьект, увеличиваем конец
+
+        increaseArray();
+
+        ial[end++] = o;
         return true;
     }
 
     @Override
-    public boolean remove(Object o) {
+    public boolean remove(Object o) {        // (Integer) int
+
+        if (indexOf(o) != -1){
+            remove(indexOf(o));
+            return true;
+        }
         return false;
     }
 
@@ -103,7 +104,8 @@ public class IntArrayList implements List {
 
     @Override
     public void clear() {
-
+        ial = new Object[10];
+        end = 0;
     }
 
     @Override
@@ -117,19 +119,37 @@ public class IntArrayList implements List {
 
     @Override
     public Object set(int index, Object element) {
-        return null;
+
+        if (index < 0 || index >= end)
+            throw new IndexOutOfBoundsException();
+
+
+        Object previousElem = ial[index];
+        ial[index] = element;
+        return previousElem;
     }
 
     @Override
     public void add(int index, Object element) {
 
+        if(index == end)
+            add(element);
+
+        increaseArray();
+
+        System.arraycopy(ial, index, ial, index+1, end-index);
+        ial[index] = element;
+        end++;
     }
 
     @Override
     public Object remove(int index) {
 
+
         if (index >= end || index < 0)
             throw new IndexOutOfBoundsException("ты пытаешься удалить то, чего у тебя нет!");
+
+        decreaseArray();
 
         Object removed = ial[index];
 
@@ -145,8 +165,9 @@ public class IntArrayList implements List {
     public int indexOf(Object o) {
 
         for (int i = 0; i < end; i++)
-            if (ial[i].equals(o))
+            if (ial[i].equals(o)){
                 return i;
+            }
 
         return -1;
     }
@@ -161,9 +182,7 @@ public class IntArrayList implements List {
         return -1;
     }
 
-    @Override
-    public ListIterator listIterator() {
-        class MyListIterator implements ListIterator {
+class MyListIterator implements ListIterator {
 
             private int cursorNext;
             private int cursorPrevious;
@@ -172,6 +191,16 @@ public class IntArrayList implements List {
             MyListIterator() {
                 cursorNext = 0;
                 cursorPrevious = -1;
+                lastCall = -1;
+            }
+
+
+            MyListIterator(int index) {
+                if (index < 0 || index > end)
+                    throw new IndexOutOfBoundsException();
+
+                this.cursorNext = index;
+                this.cursorPrevious = index-1;
                 lastCall = -1;
             }
 
@@ -223,13 +252,18 @@ public class IntArrayList implements List {
 
             @Override
             public void remove() {
+
                 if (lastCall == -1)
                     throw new IllegalStateException();
+
+                decreaseArray();
 
                 if (lastCall < end-1)
                     System.arraycopy(ial, lastCall+1, ial, lastCall, end-lastCall-1);
 
                 ial[--end] = null;
+
+
                 lastCall = -1;
                 cursorNext--;
                 cursorPrevious--;
@@ -245,19 +279,19 @@ public class IntArrayList implements List {
 
             @Override
             public void add(Object o) {
-                if(end == ial.length) {
-                    Object[] ial2 = new Object[ial.length*2];
-                    System.arraycopy(ial, 0, ial2, 0, ial.length);
-                    ial = ial2;
-                }
-                if (cursorNext != 0){
-                    System.arraycopy(ial, cursorNext, ial, cursorNext+1, end-cursorNext-1);
+
+                increaseArray();
+
+                IntArrayList.this.add(cursorNext, o);
                     cursorNext++;
-                    ial[++cursorPrevious] = o;
-                }
+                    cursorPrevious++;
                 lastCall = -1;
             }
         }
+
+    @Override
+    public ListIterator listIterator() {
+
         MyListIterator listIter = new MyListIterator();
         return listIter;
     }
@@ -266,7 +300,8 @@ public class IntArrayList implements List {
 
     @Override
     public ListIterator listIterator(int index) {
-        return null;
+        MyListIterator listIter = new MyListIterator(index);
+        return listIter;
     }
 
     @Override
@@ -292,5 +327,21 @@ public class IntArrayList implements List {
     @Override
     public Object[] toArray(Object[] a) {
         return new Object[0];
+    }
+
+    private void increaseArray() {
+        if(end == ial.length) {
+            Object[] ial2 = new Object[ial.length*2];
+            System.arraycopy(ial, 0, ial2, 0, ial.length);
+            ial = ial2;
+        }
+    }
+
+    private void decreaseArray() {
+        if (end < (ial.length/2-1) && end > 10){
+            Object[] ial2 = new Object[ial.length/2];
+            System.arraycopy(ial, 0, ial2, 0, end);
+            ial = ial2;
+        }
     }
 }
