@@ -132,6 +132,9 @@ public class IntArrayList implements List {
     @Override
     public void add(int index, Object element) {
 
+        if (index > end)
+            throw new IndexOutOfBoundsException();
+
         if(index == end)
             add(element);
 
