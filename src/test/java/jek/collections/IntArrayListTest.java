@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.ListIterator;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -104,11 +105,30 @@ class IntArrayListTest {
 
     @Test
     void addAll() {
+        String expected = "[1, 5, 54, 11, 5, 59, 54, 666, 666, 666, 666]";
+        IntArrayList c = new IntArrayList();
+        c.add(666);
+        c.add(666);
+        c.add(666);
+        c.add(666);
 
+        ial.addAll(c);
+        assertEquals(expected, Arrays.toString(ial.toArray()));
     }
 
     @Test
     void testAddAll() {
+        String expected = "[1, 5, 54, 11, 666, 666, 666, 666, 5, 59, 54]";
+
+        IntArrayList c = new IntArrayList();
+        c.add(666);
+        c.add(666);
+        c.add(666);
+        c.add(666);
+
+        ial.addAll(4, c);
+
+        assertEquals(expected, Arrays.toString(ial.toArray()));
     }
 
     @Test
@@ -196,11 +216,78 @@ class IntArrayListTest {
     }
 
     @Test
-    void listIterator() {
+    void listIteratorRunForwardAndBackwards() {
+        ListIterator iter = ial.listIterator();
+        String actual = "";
+        String expected = "1, 5, 54, 11, 5, 59, 54, 54, 59, 5, 11, 54, 5, 1, ";
+
+        while (iter.hasNext()){
+            actual += iter.next() + ", ";
+        }
+        while (iter.hasPrevious()){
+            actual += iter.previous() + ", ";
+        }
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void listIteratorRemove() {
+        ListIterator iter = ial.listIterator();
+        String expected = "[1, 5, 11, 5, 59, 54]";
+
+        iter.next();
+        iter.next();
+        iter.next();
+        iter.remove();
+
+        assertEquals(expected, Arrays.toString(ial.toArray()));
+    }
+
+    @Test
+    void listIteratorRemoveShouldThrowException() {
+        ListIterator iter = ial.listIterator();
+
+       try { iter.remove();
+       } catch (IllegalStateException thrown) {
+           assertEquals(null, thrown.getMessage());
+       }
+    }
+
+    @Test
+    void listIteratorAdd() {
+        ListIterator iter = ial.listIterator();
+        String expected = "[1, 5, 54, 666, 11, 5, 59, 54]";
+
+        iter.next();
+        iter.next();
+        iter.next();
+        iter.add(666);
+
+        assertEquals(expected, Arrays.toString(ial.toArray()));
+    }
+    @Test
+    void listIteratorSet() {
+        ListIterator iter = ial.listIterator();
+
+        iter.next();
+        iter.next();
+        iter.next();
+        iter.set(666);
+
+        assertEquals(666, ial.get(2));
     }
 
     @Test
     void testListIterator() {
+        ListIterator iter = ial.listIterator(3);
+        String expected = "11, 5, 59, 54, ";
+        String actual = "";
+
+        while(iter.hasNext())
+            actual+= iter.next() + ", ";
+
+        assertEquals(expected, actual);
     }
 
     @Test
