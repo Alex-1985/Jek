@@ -92,15 +92,6 @@ public class IntArrayList implements List {
         return false;
     }
 
-    @Override
-    public boolean addAll(Collection c) {
-        return false;
-    }
-
-    @Override
-    public boolean addAll(int index, Collection c) {
-        return false;
-    }
 
     @Override
     public void clear() {
@@ -132,7 +123,7 @@ public class IntArrayList implements List {
     @Override
     public void add(int index, Object element) {
 
-        if (index > end)
+        if (index > end || index < 0)
             throw new IndexOutOfBoundsException();
 
         if(index == end)
@@ -227,7 +218,7 @@ class MyListIterator implements ListIterator {
             @Override
             public boolean hasPrevious() {
 
-                return (cursorPrevious>0);
+                return (cursorPrevious>-1);
             }
 
             @Override
@@ -259,13 +250,7 @@ class MyListIterator implements ListIterator {
                 if (lastCall == -1)
                     throw new IllegalStateException();
 
-                decreaseArray();
-
-                if (lastCall < end-1)
-                    System.arraycopy(ial, lastCall+1, ial, lastCall, end-lastCall-1);
-
-                ial[--end] = null;
-
+                IntArrayList.this.remove(lastCall);
 
                 lastCall = -1;
                 cursorNext--;
@@ -308,6 +293,37 @@ class MyListIterator implements ListIterator {
     }
 
     @Override
+    public boolean addAll(Collection c) {
+
+//The behavior of this operation is undefined if the specified collection is modified while the operation is in progress.
+
+        if (c == null)
+            throw new NullPointerException();
+
+       Iterator iter = c.iterator();
+
+       while (iter.hasNext()) {
+            add(iter.next());
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean addAll(int index, Collection c) {
+        if (c == null)
+            throw new NullPointerException();
+
+        Iterator iter = c.iterator();
+
+        while (iter.hasNext()) {
+            add(index++, iter.next());
+        }
+
+        return true;
+    }
+
+    @Override
     public List subList(int fromIndex, int toIndex) {
         return null;
     }
@@ -341,7 +357,7 @@ class MyListIterator implements ListIterator {
     }
 
     private void decreaseArray() {
-        if (end < (ial.length/2-1) && end > 10){
+        if (end < (ial.length/2-1) && end > 9){
             Object[] ial2 = new Object[ial.length/2];
             System.arraycopy(ial, 0, ial2, 0, end);
             ial = ial2;
