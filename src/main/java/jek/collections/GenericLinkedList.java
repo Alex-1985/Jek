@@ -5,15 +5,38 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-public class GenericLinkedList implements List {
+public class GenericLinkedList<Tip> implements List<Tip> {
+
+    private int size;
+    private LinkedListObject<Tip> first, last, current;
+
+    GenericLinkedList() {
+        current = first = last = new LinkedListObject<Tip>(null, null);
+        last.nextObj = null;
+        size = 0;
+    }
+
+    private class LinkedListObject<T> {
+
+        private LinkedListObject previousObj;
+        private LinkedListObject nextObj;
+        private T obj;
+
+        LinkedListObject(LinkedListObject previousObj, T obj){
+            this.previousObj = previousObj;
+            this.obj = obj;
+        }
+    }
+
+
     @Override
     public int size() {
-        return 0;
+        return size;
     }
 
     @Override
     public boolean isEmpty() {
-        return false;
+        return (size == 0);
     }
 
     @Override
@@ -22,7 +45,7 @@ public class GenericLinkedList implements List {
     }
 
     @Override
-    public Iterator iterator() {
+    public Iterator<Tip> iterator() {
         return null;
     }
 
@@ -32,8 +55,22 @@ public class GenericLinkedList implements List {
     }
 
     @Override
-    public boolean add(Object o) {
-        return false;
+    public <T> T[] toArray(T[] a) {
+        return null;
+    }
+
+    @Override
+    public boolean add(Tip tip) {
+        if (size == 0){
+            first.obj = tip;
+        } else {
+            LinkedListObject<Tip> lastNew = new LinkedListObject<>(last, tip);
+        last.nextObj =  lastNew;
+        last = lastNew;
+        }
+
+        size++;
+        return true;
     }
 
     @Override
@@ -42,37 +79,67 @@ public class GenericLinkedList implements List {
     }
 
     @Override
-    public boolean addAll(Collection c) {
+    public boolean containsAll(Collection<?> c) {
         return false;
     }
 
     @Override
-    public boolean addAll(int index, Collection c) {
+    public boolean addAll(Collection<? extends Tip> c) {
+        return false;
+    }
+
+    @Override
+    public boolean addAll(int index, Collection<? extends Tip> c) {
+        return false;
+    }
+
+    @Override
+    public boolean removeAll(Collection<?> c) {
+        return false;
+    }
+
+    @Override
+    public boolean retainAll(Collection<?> c) {
         return false;
     }
 
     @Override
     public void clear() {
 
+
     }
 
     @Override
-    public Object get(int index) {
+    public Tip get(int index) {
+        if (index >= size || index < 0) {
+            throw new IndexOutOfBoundsException();
+        } else if (index == 0) {
+            return first.obj;
+        } else if (index == size-1){
+            return last.obj;
+        } else {
+            while (index > 0){
+                current = current.nextObj;
+                index--;
+            }
+            Tip toReturn = current.obj;
+            current = first;
+            return toReturn;
+        }
+    }
+
+    @Override
+    public Tip set(int index, Tip element) {
         return null;
     }
 
     @Override
-    public Object set(int index, Object element) {
-        return null;
-    }
-
-    @Override
-    public void add(int index, Object element) {
+    public void add(int index, Tip element) {
 
     }
 
     @Override
-    public Object remove(int index) {
+    public Tip remove(int index) {
         return null;
     }
 
@@ -87,37 +154,17 @@ public class GenericLinkedList implements List {
     }
 
     @Override
-    public ListIterator listIterator() {
+    public ListIterator<Tip> listIterator() {
         return null;
     }
 
     @Override
-    public ListIterator listIterator(int index) {
+    public ListIterator<Tip> listIterator(int index) {
         return null;
     }
 
     @Override
-    public List subList(int fromIndex, int toIndex) {
+    public List<Tip> subList(int fromIndex, int toIndex) {
         return null;
-    }
-
-    @Override
-    public boolean retainAll(Collection c) {
-        return false;
-    }
-
-    @Override
-    public boolean removeAll(Collection c) {
-        return false;
-    }
-
-    @Override
-    public boolean containsAll(Collection c) {
-        return false;
-    }
-
-    @Override
-    public Object[] toArray(Object[] a) {
-        return new Object[0];
     }
 }
