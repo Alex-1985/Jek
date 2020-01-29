@@ -12,7 +12,6 @@ public class GenericLinkedList<Tip> implements List<Tip> {
 
     GenericLinkedList() {
         current = first = last = new LinkedListObject<Tip>(null, null);
-        last.nextObj = null;
         size = 0;
     }
 
@@ -25,6 +24,7 @@ public class GenericLinkedList<Tip> implements List<Tip> {
         LinkedListObject(LinkedListObject previousObj, T obj){
             this.previousObj = previousObj;
             this.obj = obj;
+            nextObj = null;
         }
     }
 
@@ -41,6 +41,17 @@ public class GenericLinkedList<Tip> implements List<Tip> {
 
     @Override
     public boolean contains(Object o) {
+
+        int index = 0;
+
+        while (index < size){
+            if (current.obj.equals(o)){
+                current = first;
+                return true;}
+            current = current.nextObj;
+            index++;}
+
+        current = first;
         return false;
     }
 
@@ -51,7 +62,16 @@ public class GenericLinkedList<Tip> implements List<Tip> {
 
     @Override
     public Object[] toArray() {
-        return new Object[0];
+
+        Object[] array = new Object[size];
+
+        for (int i = 0; i < size; i++){
+            array[i] = current.obj;
+            current = current.nextObj;
+        }
+
+        current = first;
+        return array;
     }
 
     @Override
@@ -75,6 +95,15 @@ public class GenericLinkedList<Tip> implements List<Tip> {
 
     @Override
     public boolean remove(Object o) {
+
+        int index = 0;
+
+        while (index < size){
+            if (current.obj.equals(o)){
+
+            }
+        }
+
         return false;
     }
 
@@ -140,8 +169,36 @@ public class GenericLinkedList<Tip> implements List<Tip> {
 
     @Override
     public Tip remove(int index) {
-        return null;
-    }
+
+        LinkedListObject removed = first;
+
+        if (index >= size || index < 0) {
+            throw new IndexOutOfBoundsException();
+        } else if (index == 0) {
+            current = current.nextObj;
+            current.previousObj = null;
+            removed.nextObj = null;
+            first = current;
+        } else if (index == size-1) {
+            removed = last;
+            current = last.previousObj;
+            removed.previousObj = null;
+            current.nextObj = null;
+        } else {
+            while (index > 0){
+                removed = removed.nextObj;
+                index--;
+            }   current = removed.previousObj;
+            current.nextObj = removed.nextObj;
+            current = current.nextObj;
+            current.previousObj = removed.previousObj;
+            removed.previousObj = null;
+            removed.nextObj = null;
+        }
+        size--;
+        current = first;
+        return (Tip)removed.obj;
+}
 
     @Override
     public int indexOf(Object o) {

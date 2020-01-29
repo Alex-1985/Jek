@@ -3,6 +3,8 @@ package jek.collections;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class GenericLinkedListTest {
@@ -26,11 +28,14 @@ class GenericLinkedListTest {
     }
 
     @Test
-    void isEmpty() {
+    void isEmptyShouldBeFalse() {
+        assertFalse(glls.isEmpty());
     }
 
     @Test
     void contains() {
+
+        assertTrue(glls.contains("жуй"));
     }
 
     @Test
@@ -39,6 +44,8 @@ class GenericLinkedListTest {
 
     @Test
     void toArray() {
+        String expected = "[залупа, халупа, жуй, хуй]";
+        assertEquals(expected, Arrays.toString(glls.toArray()));
     }
 
     @Test
