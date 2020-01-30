@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.Iterator;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -15,10 +16,10 @@ class GenericLinkedListTest {
     void creatingList(){
         glls = new GenericLinkedList<>();
 
-        glls.add("залупа");
-        glls.add("халупа");
-        glls.add("жуй");
-        glls.add("хуй");
+        glls.add("object 0");
+        glls.add("object 1");
+        glls.add("object 2");
+        glls.add("object 3");
     }
 
 
@@ -35,16 +36,25 @@ class GenericLinkedListTest {
     @Test
     void contains() {
 
-        assertTrue(glls.contains("жуй"));
+        assertTrue(glls.contains("object 2"));
     }
 
     @Test
     void iterator() {
+        Iterator iter = glls.iterator();
+        String actual = "";
+        String expected = "object 0, object 1, object 2, object 3, ";
+
+        while (iter.hasNext()){
+            actual += iter.next() + ", ";
+        }
+        assertEquals(expected, actual);
     }
+
 
     @Test
     void toArray() {
-        String expected = "[залупа, халупа, жуй, хуй]";
+        String expected = "[object 0, object 1, object 2, object 3]";
         assertEquals(expected, Arrays.toString(glls.toArray()));
     }
 
@@ -86,7 +96,7 @@ class GenericLinkedListTest {
 
     @Test
     void get() {
-        String expected = "халупа";
+        String expected = "object 1";
         assertEquals(expected, glls.get(1));
     }
 

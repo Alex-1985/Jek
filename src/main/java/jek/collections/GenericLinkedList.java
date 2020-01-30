@@ -8,20 +8,20 @@ import java.util.ListIterator;
 public class GenericLinkedList<Tip> implements List<Tip> {
 
     private int size;
-    private LinkedListObject<Tip> first, last, current;
+    private LinkedListObject<Tip> first, last;
 
     GenericLinkedList() {
-        current = first = last = new LinkedListObject<Tip>(null, null);
+        first = last = new LinkedListObject<>(null, null);
         size = 0;
     }
 
-    private class LinkedListObject<T> {
+    private class LinkedListObject<Tip> {
 
         private LinkedListObject previousObj;
         private LinkedListObject nextObj;
-        private T obj;
+        private Tip obj;
 
-        LinkedListObject(LinkedListObject previousObj, T obj){
+        LinkedListObject(LinkedListObject previousObj, Tip obj){
             this.previousObj = previousObj;
             this.obj = obj;
             nextObj = null;
@@ -42,27 +42,53 @@ public class GenericLinkedList<Tip> implements List<Tip> {
     @Override
     public boolean contains(Object o) {
 
+        LinkedListObject<Tip> current = first;
         int index = 0;
 
         while (index < size){
             if (current.obj.equals(o)){
-                current = first;
                 return true;}
             current = current.nextObj;
             index++;}
 
-        current = first;
         return false;
     }
 
     @Override
     public Iterator<Tip> iterator() {
-        return null;
+
+        class Iterator<Tip> implements java.util.Iterator<Tip>{
+
+            private LinkedListObject cursor;
+            private int counter;
+
+            Iterator () {
+                cursor = first;
+                counter = 0;
+            }
+
+            @Override
+            public boolean hasNext() {
+                return (counter < size);
+            }
+
+            @Override
+            public Tip next() {
+                Tip returnTip = (Tip)cursor.obj;
+                cursor = cursor.nextObj;
+                counter++;
+                return returnTip;
+            }
+        }
+
+        Iterator<Tip> iter = new Iterator<>();
+        return iter;
     }
 
     @Override
     public Object[] toArray() {
 
+        LinkedListObject current = first;
         Object[] array = new Object[size];
 
         for (int i = 0; i < size; i++){
@@ -70,12 +96,11 @@ public class GenericLinkedList<Tip> implements List<Tip> {
             current = current.nextObj;
         }
 
-        current = first;
         return array;
     }
 
     @Override
-    public <T> T[] toArray(T[] a) {
+    public <Tip> Tip[] toArray(Tip[] a) {
         return null;
     }
 
@@ -96,6 +121,7 @@ public class GenericLinkedList<Tip> implements List<Tip> {
     @Override
     public boolean remove(Object o) {
 
+        LinkedListObject current = first;
         int index = 0;
 
         while (index < size){
@@ -135,11 +161,13 @@ public class GenericLinkedList<Tip> implements List<Tip> {
     @Override
     public void clear() {
 
-
     }
 
     @Override
     public Tip get(int index) {
+
+        LinkedListObject<Tip> current = first;
+
         if (index >= size || index < 0) {
             throw new IndexOutOfBoundsException();
         } else if (index == 0) {
@@ -152,7 +180,6 @@ public class GenericLinkedList<Tip> implements List<Tip> {
                 index--;
             }
             Tip toReturn = current.obj;
-            current = first;
             return toReturn;
         }
     }
@@ -170,6 +197,7 @@ public class GenericLinkedList<Tip> implements List<Tip> {
     @Override
     public Tip remove(int index) {
 
+        LinkedListObject current = first;
         LinkedListObject removed = first;
 
         if (index >= size || index < 0) {
@@ -196,7 +224,6 @@ public class GenericLinkedList<Tip> implements List<Tip> {
             removed.nextObj = null;
         }
         size--;
-        current = first;
         return (Tip)removed.obj;
 }
 
