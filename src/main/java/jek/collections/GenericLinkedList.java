@@ -42,14 +42,9 @@ public class GenericLinkedList<Tip> implements List<Tip> {
     @Override
     public boolean contains(Object o) {
 
-        LinkedListObject<Tip> current = first;
-        int index = 0;
-
-        while (index < size){
-            if (current.obj.equals(o)){
-                return true;}
-            current = current.nextObj;
-            index++;}
+        for (Tip object : this)
+            if(object.equals(o))
+                return true;
 
         return false;
     }
@@ -121,16 +116,12 @@ public class GenericLinkedList<Tip> implements List<Tip> {
     @Override
     public boolean remove(Object o) {
 
-        LinkedListObject current = first;
-        int index = 0;
+       if ((indexOf(o))!=-1){
+           remove(indexOf(o));
+           return true;
+       }
 
-        while (index < size){
-            if (current.obj.equals(o)){
-
-            }
-        }
-
-        return false;
+       return false;
     }
 
     @Override
@@ -140,6 +131,15 @@ public class GenericLinkedList<Tip> implements List<Tip> {
 
     @Override
     public boolean addAll(Collection<? extends Tip> c) {
+
+        if(c == null)
+            throw new NullPointerException();
+
+        Iterator<? extends Tip> iter = c.iterator();
+
+        while(iter.hasNext())
+            add(iter.next());
+
         return false;
     }
 
@@ -192,6 +192,20 @@ public class GenericLinkedList<Tip> implements List<Tip> {
     @Override
     public void add(int index, Tip element) {
 
+        if (index > size || index < 0)
+            throw new IndexOutOfBoundsException();
+
+
+        if (index == size) {
+            add(element);
+        } else if (index == 0) {
+            LinkedListObject<Tip> newObj = new LinkedListObject<>(null, element);
+            newObj.nextObj = first;   // isn't it better to overload constructor??
+            first = newObj;
+        } else {
+
+        }
+
     }
 
     @Override
@@ -229,12 +243,30 @@ public class GenericLinkedList<Tip> implements List<Tip> {
 
     @Override
     public int indexOf(Object o) {
-        return 0;
+
+        int index = 0;
+
+        for(Tip object : this){
+            if(object.equals(o))
+                return index;
+            index++;
+        }
+
+        return -1;
     }
 
     @Override
     public int lastIndexOf(Object o) {
-        return 0;
+
+       LinkedListObject current = last;
+
+        for(int index = size-1; index >= 0; index--){
+            if(current.obj.equals(o))
+                return index;
+            current = current.previousObj;
+        }
+
+        return -1;
     }
 
     @Override

@@ -3,8 +3,10 @@ package jek.collections;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -68,6 +70,11 @@ class GenericLinkedListTest {
 
     @Test
     void remove() {
+        String expected = "[object 0, object 3]";
+
+        glls.remove("object 1");
+        glls.remove("object 2");
+        assertEquals(expected, Arrays.toString(glls.toArray()));
     }
 
     @Test
@@ -76,6 +83,14 @@ class GenericLinkedListTest {
 
     @Test
     void addAll() {
+        String expected = "[object 0, object 1, object 2, object 3, OBJECT 666, OBJECT 666, OBJECT 666]";
+        List<String> toAdd = new ArrayList();
+        toAdd.add("OBJECT 666");
+        toAdd.add("OBJECT 666");
+        toAdd.add("OBJECT 666");
+
+        glls.addAll(toAdd);
+        assertEquals(expected, Arrays.toString(glls.toArray()));
     }
 
     @Test
@@ -114,10 +129,22 @@ class GenericLinkedListTest {
 
     @Test
     void indexOf() {
+        assertEquals(2, glls.indexOf("object 2"));
+    }
+    @Test
+    void indexOfNoSuchElem() {
+
+        assertEquals(-1, glls.indexOf("object 666"));
     }
 
     @Test
     void lastIndexOf() {
+        assertEquals(3, glls.indexOf("object 3"));
+    }
+
+    @Test
+    void lastIndexOfNoSuchElem() {
+        assertEquals(-1, glls.indexOf("object 666"));
     }
 
     @Test
