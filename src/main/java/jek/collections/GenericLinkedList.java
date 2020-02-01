@@ -126,7 +126,18 @@ public class GenericLinkedList<Tip> implements List<Tip> {
 
     @Override
     public boolean containsAll(Collection<?> c) {
-        return false;
+
+        if (c == null)
+            throw new NullPointerException();
+
+        Iterator iter = c.iterator();
+
+        while (iter.hasNext()){
+            if(!contains(iter.next()))
+                return false;
+        }
+
+        return true;
     }
 
     @Override
@@ -145,6 +156,17 @@ public class GenericLinkedList<Tip> implements List<Tip> {
 
     @Override
     public boolean addAll(int index, Collection<? extends Tip> c) {
+
+        if(c == null)
+            throw new NullPointerException();
+
+        Iterator<? extends Tip> iter = c.iterator();
+
+        while(iter.hasNext())
+            add(index++, iter.next());
+
+
+
         return false;
     }
 
@@ -195,6 +217,8 @@ public class GenericLinkedList<Tip> implements List<Tip> {
         if (index > size || index < 0)
             throw new IndexOutOfBoundsException();
 
+        LinkedListObject current = first;
+
 
         if (index == size) {
             add(element);
@@ -202,10 +226,20 @@ public class GenericLinkedList<Tip> implements List<Tip> {
             LinkedListObject<Tip> newObj = new LinkedListObject<>(null, element);
             newObj.nextObj = first;   // isn't it better to overload constructor??
             first = newObj;
+            size++;
         } else {
+            while(index > 0){
+                current = current.nextObj;
+                index--;
+            }
+            LinkedListObject newObj = new LinkedListObject(current.previousObj, element);
 
+            current.previousObj = newObj;
+            newObj.nextObj = current;
+            current = newObj.previousObj;
+            current.nextObj = newObj;
+            size++;
         }
-
     }
 
     @Override
@@ -282,5 +316,55 @@ public class GenericLinkedList<Tip> implements List<Tip> {
     @Override
     public List<Tip> subList(int fromIndex, int toIndex) {
         return null;
+    }
+
+    class ListIterator<Tip> implements java.util.ListIterator<Tip> {
+
+
+
+        @Override
+        public boolean hasNext() {
+            return false;
+        }
+
+        @Override
+        public Tip next() {
+            return null;
+        }
+
+        @Override
+        public boolean hasPrevious() {
+            return false;
+        }
+
+        @Override
+        public Tip previous() {
+            return null;
+        }
+
+        @Override
+        public int nextIndex() {
+            return 0;
+        }
+
+        @Override
+        public int previousIndex() {
+            return 0;
+        }
+
+        @Override
+        public void remove() {
+
+        }
+
+        @Override
+        public void set(Tip tip) {
+
+        }
+
+        @Override
+        public void add(Tip tip) {
+
+        }
     }
 }

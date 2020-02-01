@@ -79,6 +79,12 @@ class GenericLinkedListTest {
 
     @Test
     void containsAll() {
+        List<String> contains = new ArrayList();
+
+        contains.add("object 3");
+        contains.add("object 2");
+
+        assertTrue(glls.containsAll(contains));
     }
 
     @Test
@@ -95,6 +101,17 @@ class GenericLinkedListTest {
 
     @Test
     void testAddAll() {
+        String expected = "[object 0, object 1, OBJECT 666, OBJECT 666, OBJECT 666, object 2, object 3]";
+        List<String> toAdd = new ArrayList();
+
+        toAdd.add("OBJECT 666");
+        toAdd.add("OBJECT 666");
+        toAdd.add("OBJECT 666");
+
+
+        glls.addAll(2, toAdd);
+
+        assertEquals(expected, Arrays.toString(glls.toArray()));
     }
 
     @Test
@@ -121,6 +138,11 @@ class GenericLinkedListTest {
 
     @Test
     void testAdd() {
+        String expected = "[object 0, object 1, OBJECT 666, object 2, object 3]";
+
+        glls.add(2, "OBJECT 666");
+
+        assertEquals(expected, Arrays.toString(glls.toArray()));
     }
 
     @Test
