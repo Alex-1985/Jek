@@ -3,10 +3,7 @@ package jek.collections;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -171,6 +168,32 @@ class GenericLinkedListTest {
 
     @Test
     void listIterator() {
+        ListIterator iter = glls.listIterator();
+        String actual = "";
+        String expected = "object 0, object 1, object 2, object 3, object 3, object 2, object 1, object 0, ";
+
+        while (iter.hasNext())
+            actual += iter.next() + ", ";
+
+        while (iter.hasPrevious())
+            actual += iter.previous() + ", ";
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void listIteratorRemove() {
+        ListIterator iter = glls.listIterator();
+        String expected = "[object 0, object 1]";
+
+        iter.next();
+        iter.next();
+        iter.next();
+        iter.remove();
+        iter.next();
+        iter.remove();
+
+        assertEquals(expected, Arrays.toString(glls.toArray()));
     }
 
     @Test

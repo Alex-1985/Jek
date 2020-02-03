@@ -11,7 +11,7 @@ public class GenericLinkedList<Tip> implements List<Tip> {
     private LinkedListObject<Tip> first, last;
 
     GenericLinkedList() {
-        first = last = new LinkedListObject<>(null, null);
+        first = last = new LinkedListObject<Tip>(null, null);
         size = 0;
     }
 
@@ -165,8 +165,6 @@ public class GenericLinkedList<Tip> implements List<Tip> {
         while(iter.hasNext())
             add(index++, iter.next());
 
-
-
         return false;
     }
 
@@ -208,7 +206,18 @@ public class GenericLinkedList<Tip> implements List<Tip> {
 
     @Override
     public Tip set(int index, Tip element) {
-        return null;
+
+        LinkedListObject current = first;
+        Tip toReturn;
+
+        while (index > 0){
+            current = current.nextObj;
+            index--;
+        }
+        toReturn = (Tip)current.obj;
+        current.obj = element;
+
+        return toReturn;
     }
 
     @Override
@@ -305,7 +314,8 @@ public class GenericLinkedList<Tip> implements List<Tip> {
 
     @Override
     public ListIterator<Tip> listIterator() {
-        return null;
+        ListIterator<Tip> iter = new ListIterator<>();
+        return iter;
     }
 
     @Override
@@ -320,41 +330,72 @@ public class GenericLinkedList<Tip> implements List<Tip> {
 
     class ListIterator<Tip> implements java.util.ListIterator<Tip> {
 
+        LinkedListObject next;
+        LinkedListObject prev;
+        LinkedListObject lastCall;
+        int index;
+
+        ListIterator(){
+            next = first;
+            prev = null;
+            lastCall = null;
+            index = 0;
+        }
+
 
 
         @Override
         public boolean hasNext() {
-            return false;
+
+            return (next != null);
         }
 
         @Override
         public Tip next() {
-            return null;
+
+            prev = next;
+            next = next.nextObj;
+            index++;
+            lastCall = prev;
+            return (Tip)prev.obj; //didn't get why i have to downcast obj to Tip. wtf it returns 'Object'??
         }
 
         @Override
         public boolean hasPrevious() {
-            return false;
+            return (prev != null);
         }
 
         @Override
         public Tip previous() {
-            return null;
+            next = prev;
+            prev = prev.previousObj;
+            index--;
+            lastCall = next;
+            return (Tip)next.obj;
         }
 
         @Override
         public int nextIndex() {
-            return 0;
+            return index;
         }
 
         @Override
         public int previousIndex() {
-            return 0;
+            return index-1;
         }
 
         @Override
         public void remove() {
+            if(lastCall!=null){
+                next = lastCall.nextObj;
+                prev = lastCall.previousObj;
 
+                GenericLinkedList.this.remove(lastCall.obj);
+                lastCall = null;
+                index--;
+            } else {
+                throw new IllegalStateException();
+            }
         }
 
         @Override
