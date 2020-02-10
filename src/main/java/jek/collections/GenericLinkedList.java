@@ -266,9 +266,9 @@ public class GenericLinkedList<Tip> implements List<Tip> {
             first = current;
         } else if (index == size-1) {
             removed = last;
-            current = last.previousObj;
+            last = last.previousObj;
             removed.previousObj = null;
-            current.nextObj = null;
+            last.nextObj = null;
         } else {
             while (index > 0){
                 removed = removed.nextObj;
@@ -400,12 +400,19 @@ public class GenericLinkedList<Tip> implements List<Tip> {
 
         @Override
         public void set(Tip tip) {
-
+            if(lastCall == null) {
+                throw new IllegalStateException();
+            } else {
+                lastCall.obj = tip;
+                lastCall = null;
+            }
         }
 
         @Override
         public void add(Tip tip) {
 
+
         }
+
     }
 }
