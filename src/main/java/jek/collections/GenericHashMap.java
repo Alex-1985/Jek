@@ -1,10 +1,7 @@
 package jek.collections;
 
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 public class GenericHashMap<Key, Value> implements Map<Key, Value> {
 
@@ -37,9 +34,8 @@ public class GenericHashMap<Key, Value> implements Map<Key, Value> {
 
     class GhmObj<Key, Value> {
 
-        private int hashCode;
-        Key key;
-        Value value;
+        private Key key;
+        private Value value;
         private GhmObj next;
 
 
@@ -47,10 +43,8 @@ public class GenericHashMap<Key, Value> implements Map<Key, Value> {
 
             this.key = key;
             this.value = value;
-            hashCode = key.hashCode();
 
-
-        }
+            }
 
         public boolean hasNext(){return next != null;}
 
@@ -66,7 +60,9 @@ public class GenericHashMap<Key, Value> implements Map<Key, Value> {
 
 
         public Value setValue(Value value) {
-            return null;
+            Value temp = this.value;
+            this.value = value;
+            return temp;
         }
 
         @Override
@@ -101,30 +97,40 @@ public class GenericHashMap<Key, Value> implements Map<Key, Value> {
 
     @Override
     public boolean containsKey(Object key) {
-        return false;
+
+        int index = indexFor(Objects.hash(key));
+
+        if (entrys[index] != null)
+            if (entrys[index].getKey().equals(key)) return true;
+            else if (entrys[index].hasNext()) {
+                GhmObj current = entrys[index];
+                while (current.hasNext()) {
+                    if (current.getKey().equals(key)) return true;
+                    current = current.next;
+                }
+            }
+                return false;
     }
 
     @Override
     public boolean containsValue(Object value) {
+
         return false;
     }
 
     @Override
     public Value get(Object key) {
 
-        System.out.println("GET METHOD STARTS");
-
         int index = indexFor(Objects.hash(key));
-        System.out.println(Objects.hash(key));
-        System.out.println(index);
 
         if(entrys[index] != null){
 
             if(entrys[index].getKey().equals(key)) return (Value)entrys[index].getValue();
-            else if (entrys[index].hasNext()){
+
+            if (entrys[index].hasNext()){
                 GhmObj current = entrys[index];
                 while(current.hasNext()){
-                    if(current.getKey().equals(key)) return (Value) current.getValue();
+                    if(current.next.getKey().equals(key)) return (Value) current.next.getValue();
                     current = current.next;
                 }
             }
@@ -152,13 +158,36 @@ public class GenericHashMap<Key, Value> implements Map<Key, Value> {
         }
 
         entrys[indexObjToPut] = objToPut;
-
         size++;
         return null;
     }
 
     @Override
     public Value remove(Object key) {
+
+        int index = indexFor(Objects.hash(key));
+        Value returnVal;
+
+
+        if (entrys[index] != null){
+
+            if(key.equals(entrys[index].getKey())) {
+                returnVal = (Value) entrys[index].getValue();
+                if (entrys[index].hasNext()){
+                    entrys[index] = entrys[index].next;
+                }
+                entrys[index] = null;
+                return returnVal;
+
+            } else {
+                GhmObj current = entrys[index];
+                while(current.hasNext() && !current.next.getKey().equals(key)) current = current.next;
+                if (current.next.hasNext()) current.next = current.next.next;
+                else current.next = null;
+            }
+        }
+
+
         return null;
     }
 
@@ -169,12 +198,29 @@ public class GenericHashMap<Key, Value> implements Map<Key, Value> {
 
     @Override
     public void clear() {
-
+        GhmObj[] entrys2 = new GhmObj[capacity];
+        entrys = entrys2;
+        size = 0;
     }
 
     @Override
     public Set<Key> keySet() {
-        return null;
+
+        Set<Key> set = new HashSet();
+
+        for (GhmObj stp : entrys){
+            if (stp!=null){
+                if(stp.hasNext()){
+                    GhmObj linked = stp;
+                    while(linked.hasNext()){
+                        set.add((Key)linked.next.getKey());
+                        linked = linked.next;
+                    }
+                }
+                set.add((Key)stp.getKey());
+            }
+        }
+        return set;
     }
 
     @Override
