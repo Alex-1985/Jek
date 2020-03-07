@@ -23,7 +23,7 @@ class GenericHashMapTest {
         ghm.put(" neuromancer ", "Will Gibson");    // both added as 'next'
         ghm.put(" dune ", "Frank Herb");
 
-        System.out.println(Arrays.toString(ghm.entrys));
+        //System.out.println(Arrays.toString(ghm.entrys));
     }
 
     @Test
@@ -58,12 +58,29 @@ class GenericHashMapTest {
     }
 
     @Test
-    void containsValue() {
+    void containsValueFalse() {
+        assertEquals(false, ghm.containsValue("Stanislaw Lem, 1961"));
+    }
+
+    @Test
+    void containsValueTrue() {
+        assertEquals(true, ghm.containsValue("William Gibson, 1984"));
+
+    }
+
+    @Test
+    void containsLinkedValue() {
+        assertEquals(true, ghm.containsValue(" dune "));
     }
 
     @Test
     void get() {
         assertEquals("William Gibson, 1984", ghm.get("Neuromancer"));
+    }
+
+    @Test
+    void getNull() {
+        assertEquals(null, ghm.get("Solaris"));
     }
 
 
@@ -75,10 +92,10 @@ class GenericHashMapTest {
     @Test
     void remove() {
         String expected =
-                "[The Left Hand of Darkness, Neuromancer, Consider Phlebas, A Scanner Darkly, Dune,  neuromancer ,  dune ]";
-        //ghm.remove("Dune");
+                "[The Left Hand of Darkness, Neuromancer, Consider Phlebas, A Scanner Darkly,  neuromancer ,  dune ]";
+        ghm.remove("Dune");
         Set set = ghm.keySet();
-        assertEquals(expected, set);
+        assertEquals(expected, set.toString());
     }
 
     @Test
@@ -87,6 +104,8 @@ class GenericHashMapTest {
 
     @Test
     void clear() {
+        ghm.clear();
+        assertEquals(true, ghm.isEmpty());
     }
 
     @Test
@@ -99,9 +118,25 @@ class GenericHashMapTest {
 
     @Test
     void values() {
+
+
+        String expected =
+                "[Ursula K. Le Guin, 1969, William Gibson, 1984, " +
+                        "Philip K Dick, 1977, Frank Herb, Iain Banks, 1987, " +
+                        " Frank Herbert, 1965, Will Gibson]";
+        assertEquals(expected, ghm.values().toString());
     }
 
     @Test
     void entrySet() {
+
+        Set set = ghm.entrySet();
+        String expected =
+                "[The Left Hand of Darkness: Ursula K. Le Guin, 1969, Neuromancer: William Gibson, 1984, " +
+                        "A Scanner Darkly: Philip K Dick, 1977,  dune : Frank Herb, Consider Phlebas: Iain Banks, 1987, " +
+                        "Dune: Frank Herbert, 1965,  neuromancer : Will Gibson]";
+
+        assertEquals(expected, set.toString());
+
     }
 }
