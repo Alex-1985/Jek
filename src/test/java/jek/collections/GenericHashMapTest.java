@@ -12,7 +12,7 @@ class GenericHashMapTest {
     GenericHashMap<String, String> ghm;
 
     public GenericHashMapTest () {
-        ghm = new GenericHashMap<>();
+        ghm = new GenericHashMap<>(10);
 
         ghm.put("Dune", "Frank Herbert, 1965");
         ghm.put("The Left Hand of Darkness", "Ursula K. Le Guin, 1969");
@@ -23,7 +23,7 @@ class GenericHashMapTest {
         ghm.put(" neuromancer ", "Will Gibson");    // both added as 'next'
         ghm.put(" dune ", "Frank Herb");
 
-        //System.out.println(Arrays.toString(ghm.entrys));
+        System.out.println(Arrays.toString(ghm.entrys));
     }
 
     @Test
@@ -87,6 +87,12 @@ class GenericHashMapTest {
 
     @Test
     void put() {
+
+        //ghm.put();
+
+        System.out.println(Arrays.toString(ghm.entrys));
+
+        assertEquals(20, ghm.entrys.length);
     }
 
     @Test
@@ -94,6 +100,7 @@ class GenericHashMapTest {
         String expected =
                 "[The Left Hand of Darkness, Neuromancer, Consider Phlebas, A Scanner Darkly,  neuromancer ,  dune ]";
         ghm.remove("Dune");
+
         Set set = ghm.keySet();
         assertEquals(expected, set.toString());
     }

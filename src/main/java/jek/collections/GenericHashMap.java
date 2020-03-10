@@ -6,13 +6,14 @@ import java.util.*;
 public class GenericHashMap<Key, Value> implements Map<Key, Value> {
 
 
-    private GhmObj[] entrys;
+     GhmObj[] entrys;
     private double loadFact;
     private int capacity;
     private int size;
 
 
     public GenericHashMap() {
+
         loadFact = 0.75;
         capacity = 16;
         entrys = new GhmObj[capacity];
@@ -21,14 +22,18 @@ public class GenericHashMap<Key, Value> implements Map<Key, Value> {
 
     public GenericHashMap(int capacity) {
 
+        loadFact = 0.75;
         this.capacity = capacity;
-
+        entrys = new GhmObj[capacity];
+        size = 0;
     }
 
     public GenericHashMap(int capacity, double loadFact) {
 
         this.loadFact = loadFact;
         this.capacity = capacity;
+        entrys = new GhmObj[capacity];
+        size = 0;
     }
 
     // OUR ENTRY OBJECT CLASS
@@ -189,10 +194,11 @@ public class GenericHashMap<Key, Value> implements Map<Key, Value> {
 
             if (key.equals(entrys[index].getKey())) {
                 returnVal = (Value) entrys[index].getValue();
-                if (entrys[index].hasNext()) {
-                    entrys[index] = entrys[index].next;
-                }
+
+                if (entrys[index].hasNext()) {entrys[index] = entrys[index].next;}
+
                 entrys[index] = null;
+                size--;
                 return returnVal;
 
             } else {
@@ -200,8 +206,10 @@ public class GenericHashMap<Key, Value> implements Map<Key, Value> {
                 while (current.hasNext() && !current.next.getKey().equals(key)) current = current.next;
                 if (current.next.hasNext()) current.next = current.next.next;
                 else current.next = null;
+                size --;
             }
         }
+
         return null;
     }
 
@@ -269,14 +277,11 @@ public class GenericHashMap<Key, Value> implements Map<Key, Value> {
         private int iterMade;
 
 
-
         public Iter () {
 
             iterMade = size;
             currentIndex = 0;
-            while (entrys[currentIndex]==null) currentIndex++;
-
-
+            while (entrys[currentIndex] == null && currentIndex < entrys.length) { currentIndex++; }
 
             currentObj = entrys[currentIndex];
         }
@@ -284,34 +289,37 @@ public class GenericHashMap<Key, Value> implements Map<Key, Value> {
 
         @Override
         public boolean hasNext() {
-            return (iterMade > 0);
+            return (iterMade > 0 && currentIndex < entrys.length);
         }
 
         @Override
         public GenericHashMap.GhmObj next() {
+
             GenericHashMap.GhmObj entryToReturn = currentObj;
+            iterMade --;
+
+            if (iterMade == 0) return currentObj;
 
             if(currentObj.hasNext()) {
                 currentObj = currentObj.next;
             } else {
                 currentIndex++;
-                while(entrys[currentIndex] == null && currentIndex < entrys.length-1) currentIndex++;
+                while(entrys[currentIndex] == null && currentIndex < entrys.length) currentIndex++;
                 currentObj = entrys[currentIndex];
             }
 
-            iterMade --;
             return entryToReturn;
         }
     }
 
-    private void increaseSize() {
+    public void increaseSize() {
 
         if (size() == capacity * loadFact) {
 
             capacity *= 2;
             rehashArr();
-                }
-            }
+        }
+    }
 
 private void rehashArr() {
     GhmObj[] entrysSecond = new GhmObj[capacity];
@@ -320,6 +328,7 @@ private void rehashArr() {
     Iter<GhmObj> iter = iterator();
         while(iter.hasNext()){
             temp = iter.next();
+
             int index = indexFor(temp.hashCode(), capacity);
 
             if (entrysSecond[index] != null) { temp.next = entrysSecond[index]; }
@@ -327,8 +336,6 @@ private void rehashArr() {
             entrysSecond[index] = temp;
         }
     }
-
-
 
 
     private void decreaseSize() {
