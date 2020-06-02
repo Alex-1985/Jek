@@ -3,7 +3,7 @@ package jek.collections;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
+
 
 public class GenericLinkedList<Tip> implements List<Tip> {
 
@@ -24,7 +24,7 @@ public class GenericLinkedList<Tip> implements List<Tip> {
         LinkedListObject(LinkedListObject previousObj, Tip obj){
             this.previousObj = previousObj;
             this.obj = obj;
-            nextObj = null;
+            //nextObj = null;
         }
     }
 
@@ -41,10 +41,11 @@ public class GenericLinkedList<Tip> implements List<Tip> {
 
     @Override
     public boolean contains(Object o) {
+        if (o == null) { throw new NullPointerException("The query item is null"); }
 
-        for (Tip object : this)
-            if(object.equals(o))
-                return true;
+        for (Tip object : this) {
+            if(object.equals(o)) { return true; }
+        }
 
         return false;
     }
@@ -101,25 +102,46 @@ public class GenericLinkedList<Tip> implements List<Tip> {
 
     @Override
     public boolean add(Tip tip) {
+        if (tip == null) { throw new NullPointerException("The query item is null"); }
+
         if (size == 0){
             first.obj = tip;
         } else {
-            LinkedListObject<Tip> lastNew = new LinkedListObject<>(last, tip);
-        last.nextObj =  lastNew;
-        last = lastNew;
+        last.nextObj =  new LinkedListObject<>(last, tip);
+        last = last.nextObj;
         }
-
         size++;
         return true;
     }
 
     @Override
     public boolean remove(Object o) {
+        if (o == null) { throw new NullPointerException("The query item is null"); }
 
-       if ((indexOf(o))!=-1){
-           remove(indexOf(o));
-           return true;
-       }
+        if (o.equals(first.obj)) {
+            first = first.nextObj;
+            first.previousObj = null;
+            size--;
+            return true;
+        }
+
+        if (o.equals(last.obj)) {
+            last = last.previousObj;
+            last.nextObj = null;
+            size--;
+            return true;
+        }
+
+        LinkedListObject current = first.nextObj;
+        while (current.nextObj != null) {
+            if(current.obj.equals(o)) {
+                current.previousObj.nextObj = current.nextObj;
+                current.nextObj.previousObj = current.previousObj;
+                size--;
+                return true;
+            }
+            current = current.nextObj;
+        }
 
        return false;
     }
@@ -127,8 +149,7 @@ public class GenericLinkedList<Tip> implements List<Tip> {
     @Override
     public boolean containsAll(Collection<?> c) {
 
-        if (c == null)
-            throw new NullPointerException();
+        if (c == null) { throw new NullPointerException("The query item is null"); }
 
         Iterator iter = c.iterator();
 
@@ -143,8 +164,7 @@ public class GenericLinkedList<Tip> implements List<Tip> {
     @Override
     public boolean addAll(Collection<? extends Tip> c) {
 
-        if(c == null)
-            throw new NullPointerException();
+        if(c == null) { throw new NullPointerException("The query item is null"); }
 
         Iterator<? extends Tip> iter = c.iterator();
 
@@ -157,8 +177,8 @@ public class GenericLinkedList<Tip> implements List<Tip> {
     @Override
     public boolean addAll(int index, Collection<? extends Tip> c) {
 
-        if(c == null)
-            throw new NullPointerException();
+        if(c == null) { throw new NullPointerException("The query item is null"); }
+        if (index < 0 || index > size) { throw new IndexOutOfBoundsException(); }
 
         Iterator<? extends Tip> iter = c.iterator();
 
@@ -186,36 +206,47 @@ public class GenericLinkedList<Tip> implements List<Tip> {
     @Override
     public Tip get(int index) {
 
-        LinkedListObject<Tip> current = first;
+        if (index >= size || index < 0) { throw new IndexOutOfBoundsException(); }
 
-        if (index >= size || index < 0) {
-            throw new IndexOutOfBoundsException();
-        } else if (index == 0) {
+        if (index == 0) {
             return first.obj;
         } else if (index == size-1){
             return last.obj;
         } else {
+            LinkedListObject<Tip> current = first;
             while (index > 0){
                 current = current.nextObj;
                 index--;
             }
-            Tip toReturn = current.obj;
-            return toReturn;
+
+            return current.obj;
         }
     }
 
     @Override
     public Tip set(int index, Tip element) {
 
-        LinkedListObject current = first;
+        if (element == null) { throw new NullPointerException("The query item is null"); }
+        if (index < 0 || index >= size) { throw new IndexOutOfBoundsException(); }
+
         Tip toReturn;
 
-        while (index > 0){
-            current = current.nextObj;
-            index--;
+        if (index == 0) {
+            toReturn = first.obj;
+            first.obj = element;
+        } else if (index == size-1) {
+            toReturn = last.obj;
+            last.obj = element;
+        } else {
+            LinkedListObject current = first;
+
+            while (index > 0) {
+                current = current.nextObj;
+                index--;
+            }
+            toReturn = (Tip) current.obj;
+            current.obj = element;
         }
-        toReturn = (Tip)current.obj;
-        current.obj = element;
 
         return toReturn;
     }
@@ -223,75 +254,73 @@ public class GenericLinkedList<Tip> implements List<Tip> {
     @Override
     public void add(int index, Tip element) {
 
-        if (index > size || index < 0)
-            throw new IndexOutOfBoundsException();
-
-        LinkedListObject current = first;
-
+        if (element == null) { throw new NullPointerException("The query item is null"); }
+        if (index > size || index < 0) { throw new IndexOutOfBoundsException(); }
 
         if (index == size) {
             add(element);
         } else if (index == 0) {
-            LinkedListObject<Tip> newObj = new LinkedListObject<>(null, element);
-            newObj.nextObj = first;   // isn't it better to overload constructor??
-            first = newObj;
+
+            first.previousObj = new LinkedListObject<>(null, element);
+            first.previousObj.nextObj = first;
+            first = first.previousObj;
+
             size++;
         } else {
+            LinkedListObject current = first;
             while(index > 0){
                 current = current.nextObj;
                 index--;
             }
-            LinkedListObject newObj = new LinkedListObject(current.previousObj, element);
 
-            current.previousObj = newObj;
-            newObj.nextObj = current;
-            current = newObj.previousObj;
-            current.nextObj = newObj;
+            current.previousObj.nextObj = new LinkedListObject(current.previousObj, element);
+            current.previousObj.nextObj.nextObj = current;
+            current.previousObj = current.previousObj.nextObj;
+
             size++;
         }
+
     }
 
     @Override
     public Tip remove(int index) {
 
-        LinkedListObject current = first;
+        if (index >= size || index < 0) { throw new IndexOutOfBoundsException(); }
+
         LinkedListObject removed = first;
 
-        if (index >= size || index < 0) {
-            throw new IndexOutOfBoundsException();
-        } else if (index == 0) {
-            current = current.nextObj;
-            current.previousObj = null;
-            removed.nextObj = null;
-            first = current;
+        if (index == 0) {   // а если этот елемент единственный??
+
+            first = first.nextObj;
+            first.previousObj = null;
+
         } else if (index == size-1) {
             removed = last;
             last = last.previousObj;
-            removed.previousObj = null;
             last.nextObj = null;
         } else {
+
             while (index > 0){
                 removed = removed.nextObj;
                 index--;
-            }   current = removed.previousObj;
-            current.nextObj = removed.nextObj;
-            current = current.nextObj;
-            current.previousObj = removed.previousObj;
-            removed.previousObj = null;
-            removed.nextObj = null;
+            }
+
+            removed.previousObj.nextObj = removed.nextObj;
+            removed.nextObj.previousObj = removed.previousObj;
+
         }
-        size--;
-        return (Tip)removed.obj;
+       size--;
+       return (Tip)removed.obj;
 }
 
     @Override
     public int indexOf(Object o) {
+        if (o == null) { throw new NullPointerException("The query item is null"); }
 
         int index = 0;
 
         for(Tip object : this){
-            if(object.equals(o))
-                return index;
+            if(object.equals(o)) { return index; }
             index++;
         }
 
@@ -300,12 +329,12 @@ public class GenericLinkedList<Tip> implements List<Tip> {
 
     @Override
     public int lastIndexOf(Object o) {
+        if (o == null) { throw new NullPointerException("The query item is null"); }
 
        LinkedListObject current = last;
 
         for(int index = size-1; index >= 0; index--){
-            if(current.obj.equals(o))
-                return index;
+            if(current.obj.equals(o)) { return index; }
             current = current.previousObj;
         }
 
@@ -411,8 +440,6 @@ public class GenericLinkedList<Tip> implements List<Tip> {
         @Override
         public void add(Tip tip) {
 
-
         }
-
     }
 }

@@ -34,7 +34,6 @@ class GenericLinkedListTest {
 
     @Test
     void contains() {
-
         assertTrue(glls.contains("object 2"));
     }
 
@@ -63,16 +62,22 @@ class GenericLinkedListTest {
 
     @Test
     void add() {
+        String expected = "[object 0, object 1, object 2, object 3, OBJECT 666]";
+
+        glls.add("OBJECT 666");
+        assertEquals(expected, Arrays.toString(glls.toArray()));
     }
 
     @Test
     void remove() {
-        String expected = "[object 0, object 3]";
+        String expected = "[object 0, object 2]";
 
         glls.remove("object 1");
-        glls.remove("object 2");
+        glls.remove("object 3");
         assertEquals(expected, Arrays.toString(glls.toArray()));
     }
+
+
 
     @Test
     void containsAll() {
@@ -130,21 +135,62 @@ class GenericLinkedListTest {
     }
 
     @Test
-    void set() {
-    }
-
-    @Test
-    void testAdd() {
-        String expected = "[object 0, object 1, OBJECT 666, object 2, object 3]";
-
-        glls.add(2, "OBJECT 666");
+    void setChangesObject() {
+        String expected = "[object 0, OBJECT 666, object 2, object 3]";
+        glls.set(1, "OBJECT 666");
 
         assertEquals(expected, Arrays.toString(glls.toArray()));
     }
 
     @Test
-    void testRemove() {
+    void setReturnsObject() {
+        assertEquals("object 1", glls.set(1, "new object"));
     }
+
+    @Test
+    void addByIndexToMid() {
+        String expected = "[object 0, object 1, OBJECT 777, OBJECT 666, object 2, object 3]";
+
+        glls.add(2, "OBJECT 666");
+        glls.add(2, "OBJECT 777");
+
+        assertEquals(expected, Arrays.toString(glls.toArray()));
+    }
+
+    @Test
+    void addByIndexFirst() {
+        String expected = "[OBJECT 666, object 0, object 1, object 2, object 3]";
+        glls.add(0, "OBJECT 666");
+
+        assertEquals(expected, Arrays.toString(glls.toArray()));
+    }
+
+
+    @Test
+    void removeFirstByIndex() {
+        String expected = "[object 1, object 2, object 3]";
+
+        glls.remove(0);
+        assertEquals(expected, Arrays.toString(glls.toArray()));
+    }
+
+    @Test
+    void removeLastByIndex() {
+        String expected = "[object 0, object 1, object 2]";
+
+        glls.remove(3);
+        assertEquals(expected, Arrays.toString(glls.toArray()));
+    }
+
+    @Test
+    void removeFromMiddleByIndex() {
+        String expected = "[object 0, object 3]";
+
+        glls.remove(1);
+        glls.remove(1);
+        assertEquals(expected, Arrays.toString(glls.toArray()));
+    }
+
 
     @Test
     void indexOf() {
